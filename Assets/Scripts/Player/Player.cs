@@ -5,22 +5,39 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-
     [SerializeField] float moveSpeed = 7.5f;
+
+    [SerializeField] float jumpPower = 8.0f;
+    [SerializeField] float jumpTime = 0.5f;
+
+    [SerializeField] float extraHeight = 0.25f;
+    [SerializeField] LayerMask whatIsGround;
 
     Rigidbody2D rigid;
     Animator anim;
+    Collider2D coll;
 
     bool isFacingRight = false;
+    bool isJumping;
+    bool isFalling;
+
+    RaycastHit2D groundHit;
+
+    float jumpTimeCounter;
+
+    Coroutine resetTrigger;
+
     void Start()
     {
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        coll = GetComponent<Collider2D>();
     }
+
     void Update()
     {
         Move();
-        //Jump();
+        Jump();
     }
 
     private void Move()
@@ -73,6 +90,93 @@ public class Player : MonoBehaviour
 
     private void Jump()
     {
-        throw new NotImplementedException();
+        if (InputUser.Instance.control.Jumping.Jump.WasPerformedThisFrame() && isGrounded())
+        {
+            isJumping = true;
+            jumpTimeCounter = jumpTime;
+            rigid.velocity = new Vector2(rigid.velocity.x, jumpPower);
+        }
+
+        if (InputUser.Instance.control.Jumping.Jump.WasPerformedThisFrame() && isGrounded())
+        {
+            if (jumpTimeCounter > 0 && isJumping)
+            {
+                rigid.velocity = new Vector2(rigid.velocity.x, jumpPower);
+                jumpTimeCounter -= Time.deltaTime;
+            }
+            else if (jumpTimeCounter <= 0)
+            {
+                isJumping = false;
+                isFalling = true;
+            }
+            else
+            {
+                isJumping = false;
+            }
+        }
+
+        if(InputUser.Instance.control.Jumping.Jump.WasReleasedThisFrame())
+        {
+            isJumping = false;
+            isFalling = true;
+        }
+        DrawGroundCheck();
     }
+
+    private bool CheckForLand()
+    {
+        if (isFalling)
+        {
+            if (isGrounded())
+            {
+                isFalling = false;
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private bool isGrounded()
+    {
+        groundHit = Physics2D.BoxCast(coll.bounds.center, coll.bounds.size, 0, Vector2.down, extraHeight, whatIsGround);
+
+        if (groundHit.collider != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    #region Debug Function
+
+    private void DrawGroundCheck()
+    {
+        Color rayColor;
+
+        if (isGrounded())
+        {
+            rayColor = Color.green;
+        }
+        else
+        {
+            rayColor = Color.red;
+        }
+        Debug.DrawRay(coll.bounds.center + new Vector3
+            (coll.bounds.extents.x, 0), Vector2.down * (coll.bounds.extents.y + extraHeight), rayColor);
+
+        Debug.DrawRay(coll.bounds.center - new Vector3
+            (coll.bounds.extents.x, 0), Vector2.down * (coll.bounds.extents.y + extraHeight), rayColor);
+
+        Debug.DrawRay(coll.bounds.center - new Vector3(
+            coll.bounds.extents.x, coll.bounds.extents.y + extraHeight),
+            Vector2.right * (coll.bounds.extents.x * 2), rayColor);
+    }
+
+    #endregion
 }
