@@ -177,6 +177,34 @@ public partial class @Control: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Attack"",
+            ""id"": ""941a47eb-043d-4526-9962-6644a270ee73"",
+            ""actions"": [
+                {
+                    ""name"": ""MelleAttack"",
+                    ""type"": ""Button"",
+                    ""id"": ""8e7eb3b6-a268-4ff6-9634-9bfcdf76231e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""8160d202-bb41-45ca-b656-54fb4e221396"",
+                    ""path"": ""<Keyboard>/leftCtrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC"",
+                    ""action"": ""MelleAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -193,6 +221,9 @@ public partial class @Control: IInputActionCollection2, IDisposable
         // Jumping
         m_Jumping = asset.FindActionMap("Jumping", throwIfNotFound: true);
         m_Jumping_Jump = m_Jumping.FindAction("Jump", throwIfNotFound: true);
+        // Attack
+        m_Attack = asset.FindActionMap("Attack", throwIfNotFound: true);
+        m_Attack_MelleAttack = m_Attack.FindAction("MelleAttack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -342,6 +373,52 @@ public partial class @Control: IInputActionCollection2, IDisposable
         }
     }
     public JumpingActions @Jumping => new JumpingActions(this);
+
+    // Attack
+    private readonly InputActionMap m_Attack;
+    private List<IAttackActions> m_AttackActionsCallbackInterfaces = new List<IAttackActions>();
+    private readonly InputAction m_Attack_MelleAttack;
+    public struct AttackActions
+    {
+        private @Control m_Wrapper;
+        public AttackActions(@Control wrapper) { m_Wrapper = wrapper; }
+        public InputAction @MelleAttack => m_Wrapper.m_Attack_MelleAttack;
+        public InputActionMap Get() { return m_Wrapper.m_Attack; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(AttackActions set) { return set.Get(); }
+        public void AddCallbacks(IAttackActions instance)
+        {
+            if (instance == null || m_Wrapper.m_AttackActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_AttackActionsCallbackInterfaces.Add(instance);
+            @MelleAttack.started += instance.OnMelleAttack;
+            @MelleAttack.performed += instance.OnMelleAttack;
+            @MelleAttack.canceled += instance.OnMelleAttack;
+        }
+
+        private void UnregisterCallbacks(IAttackActions instance)
+        {
+            @MelleAttack.started -= instance.OnMelleAttack;
+            @MelleAttack.performed -= instance.OnMelleAttack;
+            @MelleAttack.canceled -= instance.OnMelleAttack;
+        }
+
+        public void RemoveCallbacks(IAttackActions instance)
+        {
+            if (m_Wrapper.m_AttackActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IAttackActions instance)
+        {
+            foreach (var item in m_Wrapper.m_AttackActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_AttackActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public AttackActions @Attack => new AttackActions(this);
     private int m_PCSchemeIndex = -1;
     public InputControlScheme PCScheme
     {
@@ -358,5 +435,9 @@ public partial class @Control: IInputActionCollection2, IDisposable
     public interface IJumpingActions
     {
         void OnJump(InputAction.CallbackContext context);
+    }
+    public interface IAttackActions
+    {
+        void OnMelleAttack(InputAction.CallbackContext context);
     }
 }

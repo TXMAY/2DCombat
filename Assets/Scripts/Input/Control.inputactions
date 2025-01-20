@@ -155,6 +155,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Attack",
+            "id": "941a47eb-043d-4526-9962-6644a270ee73",
+            "actions": [
+                {
+                    "name": "MelleAttack",
+                    "type": "Button",
+                    "id": "8e7eb3b6-a268-4ff6-9634-9bfcdf76231e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "8160d202-bb41-45ca-b656-54fb4e221396",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "MelleAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

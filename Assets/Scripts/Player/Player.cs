@@ -97,7 +97,7 @@ public class Player : MonoBehaviour
             rigid.velocity = new Vector2(rigid.velocity.x, jumpPower);
         }
 
-        if (InputUser.Instance.control.Jumping.Jump.WasPerformedThisFrame() && isGrounded())
+        if (InputUser.Instance.control.Jumping.Jump.IsPressed())
         {
             if (jumpTimeCounter > 0 && isJumping)
             {
