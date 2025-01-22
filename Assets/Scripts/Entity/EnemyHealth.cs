@@ -1,4 +1,5 @@
 using Cinemachine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,10 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     CinemachineImpulseSource _impulseSource;
     [SerializeField] ScreenShakeSO profile;
 
+    [SerializeField] AudioClip damageClip;
+
+    public string HurtClipName;
+
     void Start()
     {
         CurrentHealth = MaxHealth;
@@ -24,7 +29,20 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         hasTakenDamage = true;
         CurrentHealth -= amount;
         CameraShakeManager.Instance.CameraShakeFromProfile(_impulseSource, profile);
+
+        PlayRandomSFX();
+        
+        
         Die();
+    }
+
+    private void PlayRandomSFX()
+    {
+        int randomIndex = UnityEngine.Random.Range(1, 6);
+
+        string clipName = HurtClipName + randomIndex;
+
+        SoundManager.Instance.PlaySFXFromString(clipName, 1f);
     }
 
     public void Die()
