@@ -15,7 +15,7 @@ public class MeleeAttack : MonoBehaviour
     Animator anim;
     float attackCoolTimeCheck;
 
-    public bool shouldBeDamage {  get; set; }
+    public bool shouldBeDamage { get; set; }
     List<IDamageable> iDamageables = new List<IDamageable>();
 
     void Start()
@@ -36,20 +36,6 @@ public class MeleeAttack : MonoBehaviour
         attackCoolTimeCheck += Time.deltaTime;
     }
 
-    private void Attack()
-    {
-        hits = Physics2D.CircleCastAll(attackTransform.position, attackRange, transform.right, 0, attackableLayer);
-
-        for (int i = 0; i < hits.Length; i++)
-        {
-            EnemyHealth enemyHealth = hits[i].collider.GetComponent<EnemyHealth>();
-            if (enemyHealth != null)
-            {
-                enemyHealth.Damage(damageAmount);
-            }
-        }
-    }
-
     public IEnumerator AttackAvailable()
     {
         shouldBeDamage = true;
@@ -64,12 +50,12 @@ public class MeleeAttack : MonoBehaviour
 
                 if (enemyHealth != null && !enemyHealth.hasTakenDamage)
                 {
-                    enemyHealth.Damage(damageAmount);
+                    enemyHealth.Damage(damageAmount, transform.right);
                     iDamageables.Add(enemyHealth);
                 }
             }
 
-            yield return null; 
+            yield return null;
         }
 
         ReturnAttackableState();
