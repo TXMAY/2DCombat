@@ -5,31 +5,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CinemachineImpulseSource))]
-public class EnemyHealth : MonoBehaviour, IDamageable
+public class EnemyHealth : BaseHealth
 {
-    [field: SerializeField] public int CurrentHealth { get; set; }
-    [field: SerializeField] public int MaxHealth { get; set; } = 3;
-    public bool hasTakenDamage { get; set; }
-
     CinemachineImpulseSource _impulseSource;
     [SerializeField] ScreenShakeSO profile;
 
-    [SerializeField] AudioClip damageClip;
+    HPBar _hpBar;
 
-    public string HurtClipName;
-
-    [SerializeField] ParticleSystem _damageParticle;
-
-    void Start()
+    protected override void Start()
     {
-        CurrentHealth = MaxHealth;
+        base.Start();
         _impulseSource = GetComponent<CinemachineImpulseSource>();
+        _hpBar = GetComponentInChildren<HPBar>();
     }
 
-    public void Damage(int amount, Vector2 attackDirection)
+    public override void Damage(int amount, Vector2 attackDirection)
     {
         hasTakenDamage = true;
         CurrentHealth -= amount;
+        _hpBar.UpdateHPBar(MaxHealth, CurrentHealth);
         CameraShakeManager.Instance.CameraShakeFromProfile(_impulseSource, profile);
 
         PlayRandomSFX();
@@ -37,34 +31,5 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         SpawnDamageParticle(attackDirection);
 
         Die();
-    }
-
-    private void SpawnDamageParticle(Vector2 attackDirection)
-    {
-        if (_damageParticle == null)
-        {
-            return;
-        }
-
-        Quaternion spawnRotation = Quaternion.FromToRotation(Vector2.right, -attackDirection);
-
-        Instantiate(_damageParticle, transform.position, spawnRotation);
-    }
-
-    private void PlayRandomSFX()
-    {
-        int randomIndex = UnityEngine.Random.Range(1, 6);
-
-        string clipName = HurtClipName + randomIndex;
-
-        SoundManager.Instance.PlaySFXFromString(clipName, 1f);
-    }
-
-    public void Die()
-    {
-        if (CurrentHealth <= 0)
-        {
-            Destroy(gameObject);
-        }
     }
 }

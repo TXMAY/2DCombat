@@ -46,7 +46,7 @@ public class MeleeAttack : MonoBehaviour
 
             for (int i = 0; i < hits.Length; i++)
             {
-                IDamageable enemyHealth = hits[i].collider.GetComponent<EnemyHealth>();
+                IDamageable enemyHealth = hits[i].collider.GetComponent<IDamageable>();
 
                 if (enemyHealth != null && !enemyHealth.hasTakenDamage)
                 {
