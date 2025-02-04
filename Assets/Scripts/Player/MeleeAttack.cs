@@ -18,6 +18,8 @@ public class MeleeAttack : MonoBehaviour
     public bool shouldBeDamage { get; set; }
     List<IDamageable> iDamageables = new List<IDamageable>();
 
+    public float AttackCD => attackCD;
+
     void Start()
     {
         anim = GetComponent<Animator>();
