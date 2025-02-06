@@ -32,12 +32,24 @@ public class Player : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         coll = GetComponent<Collider2D>();
+
+        DashSkill.OnSkillUsed += Dashing;
     }
 
     void Update()
     {
         Move();
         Jump();
+    }
+
+    private void Dashing()
+    {
+        StartCoroutine(DashEnable());
+    }
+
+    private IEnumerator DashEnable()
+    {
+        yield return null;
     }
 
     private void Move()

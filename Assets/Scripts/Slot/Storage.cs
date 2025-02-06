@@ -41,12 +41,12 @@ public class Storage : MonoBehaviour
         else
         {
             Storage storage1 = swapUISlot.GetStorage();
-            int index1 = GetItemIndex(swapUISlot);
-            Item item1 = GetItem(index1);
+            int index1 = storage1.GetItemIndex(swapUISlot);
+            Item item1 = storage1.GetItem(index1);
 
             Storage storage2 = otherSlot.GetStorage();
-            int index2 = GetItemIndex(otherSlot);
-            Item item2 = GetItem(index2);
+            int index2 = storage2.GetItemIndex(otherSlot);
+            Item item2 = storage2.GetItem(index2);
 
             if (!storage1.staticStorage)
             {

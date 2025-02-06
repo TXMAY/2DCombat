@@ -42,6 +42,7 @@ public class UISlot : MonoBehaviour
             mouseDrag = gameObject.GetComponent<MouseDrag>();
         }
 
+        mouseDrag.SetDragAbillity(true);
         mouseDrag.SetupStorage(storage, this);
     }
 
