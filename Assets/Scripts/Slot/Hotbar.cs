@@ -17,7 +17,7 @@ public class Hotbar : Storage
 
         for (int i = 0; i < hotkeys.Length; i++)
         {
-            if(Input.GetKey(hotkeys[i]))
+            if(Input.GetKeyDown(hotkeys[i]))
             {
                 items[i].skillData.CastSpell(player);
             }

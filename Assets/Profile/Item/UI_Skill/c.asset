@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b128a3cdefd96f419e018e73f4c7ba9, type: 3}
   m_Name: c
   m_EditorClassIdentifier: 
-  itemName: 
+  itemName: C
   iconImage: {fileID: 21300000, guid: 009267832ee423d41862af4a2323008f, type: 3}
   skillData: {fileID: 11400000, guid: 2398790dc5e7fb7478ef85db8f0940fa, type: 2}
